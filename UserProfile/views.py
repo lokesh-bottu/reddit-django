@@ -1,10 +1,12 @@
 
 from django.shortcuts import  redirect, render
+from django.views.decorators.csrf import csrf_exempt
 
-
-from django.http import HttpResponse
+from django.http import HttpResponse,JsonResponse
 from .models import Post
 from django.contrib.auth.models import User
+from .forms import LikeForm
+import json
 
 def create_post_view(request):
 
@@ -33,3 +35,24 @@ def create_post_view(request):
     else:
         
         return render(request, 'authentication/index1.html', context)
+    
+
+@csrf_exempt  # For simplicity. In a real application, use a proper CSRF protection approach.
+def like_post(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+            form = LikeForm(data)
+            if form.is_valid():
+                post_id = form.cleaned_data['post_id']
+                post = Post.objects.get(pk=post_id)
+                post.likes.add(request.user)
+                likes_count = post.likes.count()
+                print(f"Post {post_id} liked by {request.user.username}. New likes count: {likes_count}")
+                return JsonResponse({'likes_count': likes_count})
+            else:
+                print("Form not valid:", form.errors)
+        except json.JSONDecodeError:
+            print("Invalid JSON data")
+    print("Invalid request")
+    return JsonResponse({'error': 'Invalid request'})
