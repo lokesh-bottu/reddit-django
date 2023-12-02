@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate,login
 # from .models import UserDetails
+from UserProfile.models import Post
 
 # Create your views here.
 def home(request):
@@ -28,6 +29,11 @@ def signup(request):
 
 
 def signin(request):
+
+    
+
+
+
     if(request.method == 'POST'):
         username = request.POST['username']
         password = request.POST['password']
@@ -36,7 +42,17 @@ def signin(request):
 
         if user is not None:
             login(request,user)
-            return render(request,'authentication/index1.html',{'username':username})
+            all_posts = {}
+            for post in Post.objects.all():
+                post_id = post.id
+                all_posts[post_id] = {
+                        'post_caption': post.caption,
+                        'post_description': post.description,
+                        'post_likes': post.likes.count(),
+                }
+
+            context = {'all_posts': all_posts,'username':username}
+            return render(request,'authentication/index1.html',context)
         else:
             messages.error(request, 'Incorrect username or password.')
             return redirect('home')

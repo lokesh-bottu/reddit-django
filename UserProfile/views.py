@@ -9,8 +9,6 @@ from .forms import LikeForm
 import json
 
 def create_post_view(request):
-
-
     all_posts = {}
     for post in Post.objects.all():
         post_id = post.id
@@ -18,10 +16,9 @@ def create_post_view(request):
                 'post_caption': post.caption,
                 'post_description': post.description,
                 'post_likes': post.likes.count(),
-            }
+        }
 
-        context = {'all_posts': all_posts}
-
+    context = {'all_posts': all_posts}
     if(request.method == "POST"):
         caption = request.POST['caption']
         description = request.POST['description']
@@ -33,11 +30,10 @@ def create_post_view(request):
         post.save()
         return redirect('user:create_post')
     else:
-        
         return render(request, 'authentication/index1.html', context)
     
 
-@csrf_exempt  # For simplicity. In a real application, use a proper CSRF protection approach.
+@csrf_exempt  
 def like_post(request):
     if request.method == 'POST':
         try:
