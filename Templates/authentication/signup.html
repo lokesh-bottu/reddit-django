@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css"  href="{% static 'signup.css' %}">
+    <title>Document</title>
+</head>
+<body>
+    <form action = "/signup" method="POST" class="form">
+        {% csrf_token %}
+        <p class="title">Register </p>
+        <p class="message">Sign up for free </p>
+    
+        <label>
+            <input id = "username" name = "username" required="" placeholder="" type="text" class="input">
+            <span>Username</span>
+        </label> 
+    
+        <div class="flex">
+            <label>
+                <input id = "firstname" name = "firstname" required="" placeholder="" type="text" class="input">
+                <span>Firstname</span>
+            </label>
+    
+            <label>
+                <input id = "lastname" name = "lastname" required="" placeholder="" type="text" class="input">
+                <span>Lastname</span>
+            </label>
+        </div>  
+                
+        <label>
+            <input id = "email" name = "email" required="" placeholder="" type="email" class="input">
+            <span>Email</span>
+        </label> 
+            
+        <label>
+            <input id = "password" name = "password" required="" placeholder="" type="password" class="input">
+            <span>Password</span>
+        </label>
+        <label>
+            <input id = "confirmpassword" name = "confirmpassword" required="" placeholder="" type="password" class="input">
+            <span>Confirm password</span>
+        </label>
+        <button class="submit">Register</button>
+        <p class="signin">Already have an acount ? <a href="#">Signin</a> </p>
+    </form>
+    <script src = "" async defer></script>
+</body>
+</html>

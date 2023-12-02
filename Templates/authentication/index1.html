@@ -1,0 +1,62 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index1</title>
+    <link rel="stylesheet" type="text/css"  href="{% static 'index1.css' %}">
+</head>
+<body>
+    <h1>successfully signed in {{username}}</h1>
+    <button onclick = "togglePopup()">Create Post</button>
+    <div class = "popup" id = "popup-1">
+        <div class = "overlay"> </div>
+        <div class = "content">
+            <div class = "close-btn" onclick="togglePopup()">&times;</div>
+            <div class="form-container">
+                <form  action = "{% url 'user:create_post' %}" method = "POST" class="form">
+                    {% csrf_token %}
+                  <div class="form-group">
+                    <label for="caption">Caption</label>
+                    <input type="text" id="caption" name="caption" required="">
+                  </div>
+                  <div class="form-group">
+                    <label for="textarea">Description</label>
+                    <textarea name="description" id="description" rows="10" cols="50" required=""></textarea>
+                  </div>
+                  <button class="form-submit-btn" type="submit">Submit Post</button>
+                </form>
+              </div>
+        </div>
+    </div>
+   
+    <script >
+    function togglePopup(){
+      document.getElementById("popup-1").classList.toggle("active");
+    }
+    </script>
+
+
+
+{% for post_id, post_info in all_posts.items %}
+<div>
+    <!-- You can access post_id if needed -->
+    <h3>{{ post_info.post_caption }}</h3>
+    <p><strong>Caption:</strong> {{ post_info.post_caption }}</p>
+    <p><strong>Description:</strong> {{ post_info.post_description }}</p>
+    
+    <!-- Displaying the number of likes for the post -->
+    <p><strong>Likes:</strong> {{ post_info.post_likes }}</p>
+    
+    <!-- Display comments if needed -->
+    <h4>Comments:</h4>
+    <!-- Add your comment iteration logic here if you want to display comments -->
+</div>
+<hr>
+{% endfor %}
+
+
+    
+</body>
+</html>
