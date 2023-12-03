@@ -48,7 +48,8 @@
     <!-- Displaying the number of likes for the post -->
 
     <p><strong>Like :</strong> <span id="likes_count_{{ post_id }}">{{ post_info.post_likes }}</span></p>
-    <button onclick = "likePost({{ post_id }})">Like</button>
+    <button id="like_button_{{ post_id }}" onclick="likePost({{ post_id }})">Like</button>
+
 
     <!-- Display comments if needed -->
     <h4>Comments:</h4>
@@ -61,6 +62,8 @@
     function togglePopup() {
       document.getElementById("popup-1").classList.toggle("active");
     }
+
+    <!-- index1.html -->
 
   function likePost(postId) {
       // Send an AJAX request to the server to handle the like action
@@ -80,8 +83,14 @@
       .then(response => response.json())
       .then(data => {
           // Update the likes count in the UI
-          console.log(`Likes count after liking: ${data.likes_count}`);
+          console.log(`Likes count after action: ${data.likes_count}`);
           document.getElementById(`likes_count_${postId}`).innerText = data.likes_count;
+
+          // Update the like button text based on the liked status
+          const likeButton = document.getElementById(`like_button_${postId}`);
+          if (likeButton) {
+              likeButton.innerText = data.liked ? 'Unlike' : 'Like';
+          }
       })
       .catch(error => console.error('Error:', error));
   }

@@ -33,7 +33,8 @@ def create_post_view(request):
         return render(request, 'authentication/index1.html', context)
     
 
-@csrf_exempt  
+
+@csrf_exempt
 def like_post(request):
     if request.method == 'POST':
         try:
@@ -42,10 +43,21 @@ def like_post(request):
             if form.is_valid():
                 post_id = form.cleaned_data['post_id']
                 post = Post.objects.get(pk=post_id)
-                post.likes.add(request.user)
+                user = request.user
+
+                # Check if the user has already liked the post
+                if user in post.likes.all():
+                    # If yes, remove the like
+                    post.likes.remove(user)
+                    liked = False
+                else:
+                    # If no, add the like
+                    post.likes.add(user)
+                    liked = True
+
                 likes_count = post.likes.count()
-                print(f"Post {post_id} liked by {request.user.username}. New likes count: {likes_count}")
-                return JsonResponse({'likes_count': likes_count})
+                print(f"Post {post_id} {'liked' if liked else 'unliked'} by {user.username}. New likes count: {likes_count}")
+                return JsonResponse({'likes_count': likes_count, 'liked': liked})
             else:
                 print("Form not valid:", form.errors)
         except json.JSONDecodeError:
