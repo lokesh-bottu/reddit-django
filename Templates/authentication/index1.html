@@ -39,21 +39,25 @@
 
   {% for post_id, post_info in all_posts.items %}
   <div>
-    <!-- You can access post_id if needed -->
     <h1>This is post id{{post_id}}</h1>
     <h3>{{ post_info.post_caption }}</h3>
     <p><strong>Caption:</strong> {{ post_info.post_caption }}</p>
     <p><strong>Description:</strong> {{ post_info.post_description }}</p>
 
-    <!-- Displaying the number of likes for the post -->
 
     <p><strong>Like :</strong> <span id="likes_count_{{ post_id }}">{{ post_info.post_likes }}</span></p>
     <button id="like_button_{{ post_id }}" onclick="likePost({{ post_id }})">Like</button>
 
+    <div id="comments_section_{{ post_id }}">
 
-    <!-- Display comments if needed -->
-    <h4>Comments:</h4>
-    <!-- Add your comment iteration logic here if you want to display comments -->
+      {% for comment in comments %}
+        <p>{{ comment.user.username }}: {{ comment.text }}</p>
+      {% endfor %}
+    </div>
+
+    <input type="text" id="comment_input_{{ post_id }}" placeholder="Add a comment...">
+    <button onclick="commentPost({{ post_id }})">Comment</button>
+   
   </div>
   <hr>
   {% endfor %}
@@ -63,37 +67,69 @@
       document.getElementById("popup-1").classList.toggle("active");
     }
 
-    <!-- index1.html -->
 
-  function likePost(postId) {
-      // Send an AJAX request to the server to handle the like action
-      const csrfToken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+    function likePost(postId) {
+    
+        const csrfToken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
 
-      console.log(`Liking post ${postId}`);
-      console.log(`CSRF Token: ${csrfToken}`);
+        console.log(`Liking post ${postId}`);
+        console.log(`CSRF Token: ${csrfToken}`);
 
-      fetch('{% url "user:like_post" %}', {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json',
-              'X-CSRFToken': csrfToken,
-          },
-          body: JSON.stringify({ post_id: postId }),
-      })
-      .then(response => response.json())
-      .then(data => {
-          // Update the likes count in the UI
-          console.log(`Likes count after action: ${data.likes_count}`);
-          document.getElementById(`likes_count_${postId}`).innerText = data.likes_count;
+        fetch('{% url "user:like_post" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken,
+            },
+            body: JSON.stringify({ post_id: postId }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Update the likes count in the UI
+            console.log(`Likes count after action: ${data.likes_count}`);
+            document.getElementById(`likes_count_${postId}`).innerText = data.likes_count;
 
-          // Update the like button text based on the liked status
-          const likeButton = document.getElementById(`like_button_${postId}`);
-          if (likeButton) {
-              likeButton.innerText = data.liked ? 'Unlike' : 'Like';
-          }
-      })
-      .catch(error => console.error('Error:', error));
-  }
+            // Update the like button text based on the liked status
+            const likeButton = document.getElementById(`like_button_${postId}`);
+            if (likeButton) {
+                likeButton.innerText = data.liked ? 'Unlike' : 'Like';
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+
+    function commentPost(postId) {
+        const commentInput = document.getElementById(`comment_input_${postId}`);
+        const commentText = commentInput.value.trim();
+
+        if (commentText !== "") {
+            const csrfToken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+
+            console.log(`Adding comment to post ${postId}`);
+            console.log(`Comment text: ${commentText}`);
+            console.log(`CSRF Token: ${csrfToken}`);
+
+            fetch('{% url "comment_post" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': csrfToken,
+                },
+                body: `post_id=${postId}&text=${commentText}`,
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Update the comments section in the UI
+                const commentsSection = document.getElementById(`comments_section_${postId}`);
+                if (commentsSection) {
+                    commentsSection.innerHTML = data.comments_html;
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    }
+
 </script>
 
 </body>
