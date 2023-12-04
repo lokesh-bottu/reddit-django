@@ -13,123 +13,121 @@
 
 
   <!-- <h1>succesprafulsfully signed in {{username}}</h1> -->
-  <button onclick="togglePopup()">Create Post</button>
-  <div class="popup" id="popup-1">
-    <div class="overlay"> </div>
-    <div class="content">
-      <div class="close-btn" onclick="togglePopup()">&times;</div>
-      <div class="form-container">
-        <form action="{% url 'user:create_post' %}" method="POST" class="form">
-          {% csrf_token %}
-          <div class="form-group">
-            <label for="caption">Caption</label>
-            <input type="text" id="caption" name="caption" required="">
-          </div>
-          <div class="form-group">
-            <label for="textarea">Description</label>
-            <textarea name="description" id="description" rows="10" cols="50" required=""></textarea>
-          </div>
-          <button class="form-submit-btn" type="submit">Submit Post</button>
-        </form>
-      </div>
+    <button onclick="togglePopup()">Create Post</button>
+    <div class="popup" id="popup-1">
+        <div class="overlay"> </div>
+        <div class="content">
+            <div class="close-btn" onclick="togglePopup()">&times;</div>
+            <div class="form-container">
+                <form action="{% url 'user:create_post' %}" method="POST" class="form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="caption">Caption</label>
+                    <input type="text" id="caption" name="caption" required="">
+                </div>
+                <div class="form-group">
+                    <label for="textarea">Description</label>
+                    <textarea name="description" id="description" rows="10" cols="50" required=""></textarea>
+                </div>
+                <button class="form-submit-btn" type="submit">Submit Post</button>
+                </form>
+            </div>
+        </div>
     </div>
-  </div>
 
 
+    {% for post_id, post_info in all_posts.items %}
+    <div>
+        <h1>This is post id{{post_id}}</h1>
+        <p><strong>Caption:</strong> {{ post_info.post_caption }}</p>
+        <p><strong>Description:</strong> {{ post_info.post_description }}</p>
 
-  {% for post_id, post_info in all_posts.items %}
-  <div>
-    <h1>This is post id{{post_id}}</h1>
-    <p><strong>Caption:</strong> {{ post_info.post_caption }}</p>
-    <p><strong>Description:</strong> {{ post_info.post_description }}</p>
 
+        <p><strong>Like :</strong> <span id="likes_count_{{ post_id }}">{{ post_info.post_likes }}</span></p>
+        <button id="like_button_{{ post_id }}" onclick="likePost({{ post_id }})">Like</button>
 
-    <p><strong>Like :</strong> <span id="likes_count_{{ post_id }}">{{ post_info.post_likes }}</span></p>
-    <button id="like_button_{{ post_id }}" onclick="likePost({{ post_id }})">Like</button>
+        {% for com_text in post_info.post_comments%}
+        <p>{{com_text}}</p>
+        {% endfor %}
 
-    {% for com_text in post_info.post_comments%}
-    <p>{{com_text}}</p>
+        <input type="text" id="comment_text_{{ post_id }}" placeholder="Enter your comment">
+        <button onclick="addComment({{ post_id }})">Submit Comment</button>
+
+    </div>
     {% endfor %}
 
-    <input type="text" id="comment_text_{{ post_id }}" placeholder="Enter your comment">
-    <button onclick="addComment({{ post_id }})">Submit Comment</button>
+    <script>
 
-
-  
-    </div>
-  <hr>
-  {% endfor %}
-
-  <script>
-
-    function togglePopup() {
-      document.getElementById("popup-1").classList.toggle("active");
-    }
-
-
-    function likePost(postId) {
-    
-        const csrfToken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
-
-        console.log(`Liking post ${postId}`);
-        console.log(`CSRF Token: ${csrfToken}`);
-
-        fetch('{% url "user:like_post" %}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrfToken,
-            },
-            body: JSON.stringify({ post_id: postId }),
-        })
-        .then(response => response.json())
-        .then(data => {
-           
-            console.log(`Likes count after action: ${data.likes_count}`);
-            document.getElementById(`likes_count_${postId}`).innerText = data.likes_count;
-
-           
-            const likeButton = document.getElementById(`like_button_${postId}`);
-            if (likeButton) {
-                likeButton.innerText = data.liked ? 'Unlike' : 'Like';
+        function togglePopup() {
+            document.getElementById("popup-1").classList.toggle("active");
             }
-        })
-        .catch(error => console.error('Error:', error));
-    }
 
+    
 
+        
+        function likePost(postId) {
+        
+            const csrfToken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
 
+            console.log(`Liking post ${postId}`);
+            console.log(`CSRF Token: ${csrfToken}`);
 
-    function addComment(postId) {
-    const csrfToken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
-    const commentTextElement = document.getElementById(`comment_text_${postId}`);
-    const commentText = commentTextElement.value;
-
-    console.log(`Adding comment for post ${postId}: ${commentText}`);
-    console.log(`CSRF Token: ${csrfToken}`);
-
-    fetch('{% url "user:add_comment" %}', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': csrfToken,
-        },
-        body: JSON.stringify({ post_id: postId, text: commentText }),
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            console.log("Comment added successfully!");
+            fetch('{% url "user:like_post" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+                body: JSON.stringify({ post_id: postId }),
+            })
+            .then(response => response.json())
+            .then(data => {
+            
+                console.log(`Likes count after action: ${data.likes_count}`);
+                document.getElementById(`likes_count_${postId}`).innerText = data.likes_count;
 
             
-            commentTextElement.value = '';
-
-        } else {
-            console.error("Failed to add comment.");
+                const likeButton = document.getElementById(`like_button_${postId}`);
+                if (likeButton) {
+                    likeButton.innerText = data.liked ? 'Unlike' : 'Like';
+                }
+            })
+            .catch(error => console.error('Error:', error));
         }
-    })
-    .catch(error => console.error('Error:', error));
-}
+
+
+
+
+        function addComment(postId) {
+            const csrfToken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+            const commentTextElement = document.getElementById(`comment_text_${postId}`);
+            const commentText = commentTextElement.value;
+
+            console.log(`Adding comment for post ${postId}: ${commentText}`);
+            console.log(`CSRF Token: ${csrfToken}`);
+
+            fetch('{% url "user:add_comment" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+                body: JSON.stringify({ post_id: postId, text: commentText }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log("Comment added successfully!");
+
+                    
+                    commentTextElement.value = '';
+
+                } else {
+                    console.error("Failed to add comment.");
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
 
 
 
