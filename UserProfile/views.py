@@ -25,7 +25,9 @@ def create_post_view(request):
                 'post_caption': post.caption,
                 'post_description': post.description,
                 'post_likes': post.likes.count(),
-                'post_comments':comments_list
+                'post_comments':comments_list,
+                'user_name':post.user,
+                'comments_count':len(comments_list)
         }
 
 
@@ -108,14 +110,6 @@ def add_comment(request, post_id):
     
     print("Invalid request or failed to add comment.")
     return JsonResponse({'error': 'Invalid request or failed to add comment'})
-
-
-
-
-
-
-
-
 
 @csrf_exempt
 def add_comment(request):

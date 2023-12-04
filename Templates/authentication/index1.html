@@ -12,24 +12,28 @@
 <body>
 
 
-  <!-- <h1>succesprafulsfully signed in {{username}}</h1> -->
+    <!-- <h1>succesprafulsfully signed in {{username}}</h1> -->
     <button onclick="togglePopup()">Create Post</button>
+
     <div class="popup" id="popup-1">
-        <div class="overlay"> </div>
+        <div class="overlay"></div>
         <div class="content">
             <div class="close-btn" onclick="togglePopup()">&times;</div>
             <div class="form-container">
                 <form action="{% url 'user:create_post' %}" method="POST" class="form">
-                {% csrf_token %}
-                <div class="form-group">
-                    <label for="caption">Caption</label>
-                    <input type="text" id="caption" name="caption" required="">
-                </div>
-                <div class="form-group">
-                    <label for="textarea">Description</label>
-                    <textarea name="description" id="description" rows="10" cols="50" required=""></textarea>
-                </div>
-                <button class="form-submit-btn" type="submit">Submit Post</button>
+                    {% csrf_token %}
+                    
+                    <div class="form-group">
+                        <label for="caption">Caption</label>
+                        <input type="text" id="caption" name="caption" required="">
+                    </div>
+    
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea name="description" id="description" rows="10" cols="50" required=""></textarea>
+                    </div>
+    
+                    <button class="form-submit-btn" type="submit">Submit Post</button>
                 </form>
             </div>
         </div>
@@ -37,30 +41,79 @@
 
 
     {% for post_id, post_info in all_posts.items %}
-    <div>
-        <h1>This is post id{{post_id}}</h1>
-        <p><strong>Caption:</strong> {{ post_info.post_caption }}</p>
-        <p><strong>Description:</strong> {{ post_info.post_description }}</p>
+
+        <div class="bg-container">
+            <div class="primary-container">
+                <div class="post">
+                    <div class="reations">
+                        <i class="fa-solid fa-up-long icons"></i>
+                        <div>
+                            <p>1.5k</p>
+                        </div>
+                        <i class="fa-solid fa-up-long icons"></i>
+                    </div>
+                    <div class="main-post">
+                        <hr>
+                        <div class="main-content">
+                            <div class="community-container">
+                                <p class="community">Posted by {{post_info.user_name}}</p>
+                                <button>Join</button>
+                            </div>
+                            <p class="content">{{ post_info.post_caption }}</p>
+                            <img src="{% static 'image.jpeg'%}" class="img-content" alt="">
+                            <p>{{ post_info.post_description }}</p>
+                            <div class="reaction-container">
+                                <div class = "post-reactions display-likes">
+                                    <p><span id="likes_count_{{ post_id }}">{{ post_info.post_likes }}</p>
+                                    <button id="like_button_{{ post_id }}" onclick="likePost({{ post_id }})">Like</button>
+                                    
+                                </div>
+                                <div class="post-reactions" onclick="openComments()">
+                                    <i class="fa-regular fa-comment"></i>
+                                    <p>{{post_info.comments_count}} comments</p>
+                                </div>
+                                <div class="post-reactions">
+                                    <i class="fa-solid fa-share"></i>
+                                    <p>Share</p>
+                                </div>
+                                <div class="post-reactions">
+                                    <i class="fa-regular fa-bookmark"></i>
+                                    <p>Save</p>
+                                </div>
+                                
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="comment-section" id="comments">
+                    <input type="text" id="comment_text_{{ post_id }}" placeholder="Enter your comment">
+                    <button onclick="addComment({{ post_id }})">Submit Comment</button>
+                    {% for com_text in post_info.post_comments %}
+                        <p>{{ com_text }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+
+        
 
 
-        <p><strong>Like :</strong> <span id="likes_count_{{ post_id }}">{{ post_info.post_likes }}</span></p>
-        <button id="like_button_{{ post_id }}" onclick="likePost({{ post_id }})">Like</button>
-
-        {% for com_text in post_info.post_comments%}
-        <p>{{com_text}}</p>
-        {% endfor %}
-
-        <input type="text" id="comment_text_{{ post_id }}" placeholder="Enter your comment">
-        <button onclick="addComment({{ post_id }})">Submit Comment</button>
-
-    </div>
     {% endfor %}
+
 
     <script>
 
         function togglePopup() {
-            document.getElementById("popup-1").classList.toggle("active");
-            }
+        document.getElementById("popup-1").classList.toggle("active");
+        }
+
+
+        let comments = document.getElementById('comments')
+        function openComments(){
+            comments.classList.toggle('active-comments')
+        }
 
     
 
@@ -129,10 +182,6 @@
             .catch(error => console.error('Error:', error));
         }
 
-
-
-</script>
-
+    </script>
 </body>
-
 </html>
