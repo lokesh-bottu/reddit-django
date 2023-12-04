@@ -18,7 +18,7 @@ def create_post_view(request):
         all_posts[post_id] = {
                 'post_caption': post.caption,
                 'post_description': post.description,
-                'post_likes': post.likes.count(),
+                'post_likes': (post.likesposts.count() - post.dislikesposts.count()),
         }
 
     context = {'all_posts': all_posts}
@@ -45,28 +45,34 @@ def like_post(request):
             form = LikeForm(data)
             if form.is_valid():
                 post_id = form.cleaned_data['post_id']
+                action = form.cleaned_data['action']
                 post = Post.objects.get(pk=post_id)
                 user = request.user
 
-                # Check if the user has already liked the post
-                if user in post.likes.all():
-                    # If yes, remove the like
-                    post.likes.remove(user)
-                    liked = False
-                else:
-                    # If no, add the like
-                    post.likes.add(user)
-                    liked = True
-
-                likes_count = post.likes.count()
+                if action == 'like':
+                    # Check if the user has already liked the post
+                    if user in post.dislikesposts.all():
+                        # If yes, remove the like
+                        post.dislikesposts.remove(user)
+                        liked = True
+                        post.likesposts.add(user)
+                elif action == 'dislike':
+                    # Check if the user has already disliked the post
+                    if user in post.likesposts.all():
+                        # If yes, remove the dislike
+                        post.likesposts.remove(user)
+                        disliked = True
+                        post.dislikesposts.add(user)
+                likes_count = (post.likesposts.count() - post.dislikesposts.count())
                 print(f"Post {post_id} {'liked' if liked else 'unliked'} by {user.username}. New likes count: {likes_count}")
-                return JsonResponse({'likes_count': likes_count, 'liked': liked})
+                return JsonResponse({'likes_count': likes_count, 'liked': liked, 'action': action})
             else:
                 print("Form not valid:", form.errors)
         except json.JSONDecodeError:
             print("Invalid JSON data")
     print("Invalid request")
     return JsonResponse({'error': 'Invalid request'})
+
 
 
 

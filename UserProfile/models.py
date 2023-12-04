@@ -34,7 +34,8 @@ class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     caption = models.CharField(max_length=255)
     description = models.TextField()
-    likes = models.ManyToManyField(User, related_name='liked_posts', blank=True)
+    likesposts = models.ManyToManyField(User, related_name='liked_posts', blank=True)
+    dislikesposts = models.ManyToManyField(User, related_name='disliked_posts', blank=True)
     comments = models.ManyToManyField('Comment', related_name='post_comments', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
