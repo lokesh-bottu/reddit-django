@@ -15,11 +15,19 @@ def create_post_view(request):
     all_posts = {}
     for post in Post.objects.all():
         post_id = post.id
+        id_comment = post.id
+        comments_list = []
+        for com in Comment.objects.filter(post_id = Post.objects.get(id = id_comment)):
+            com_string = str(com.user)+"--"+str(com.text)
+            comments_list.append(com_string)
+
         all_posts[post_id] = {
                 'post_caption': post.caption,
                 'post_description': post.description,
-                'post_likes': (post.likesposts.count() - post.dislikesposts.count()),
+                'post_likes': post.likes.count(),
+                'post_comments':comments_list
         }
+
 
     context = {'all_posts': all_posts}
     if(request.method == "POST"):
@@ -45,27 +53,22 @@ def like_post(request):
             form = LikeForm(data)
             if form.is_valid():
                 post_id = form.cleaned_data['post_id']
-                action = form.cleaned_data['action']
                 post = Post.objects.get(pk=post_id)
                 user = request.user
 
-                if action == 'like':
-                    # Check if the user has already liked the post
-                    if user in post.dislikesposts.all():
-                        # If yes, remove the like
-                        post.dislikesposts.remove(user)
-                        liked = True
-                        post.likesposts.add(user)
-                elif action == 'dislike':
-                    # Check if the user has already disliked the post
-                    if user in post.likesposts.all():
-                        # If yes, remove the dislike
-                        post.likesposts.remove(user)
-                        disliked = True
-                        post.dislikesposts.add(user)
-                likes_count = (post.likesposts.count() - post.dislikesposts.count())
+                # Check if the user has already liked the post
+                if user in post.likes.all():
+                    # If yes, remove the like
+                    post.likes.remove(user)
+                    liked = False
+                else:
+                    # If no, add the like
+                    post.likes.add(user)
+                    liked = True
+
+                likes_count = post.likes.count()
                 print(f"Post {post_id} {'liked' if liked else 'unliked'} by {user.username}. New likes count: {likes_count}")
-                return JsonResponse({'likes_count': likes_count, 'liked': liked, 'action': action})
+                return JsonResponse({'likes_count': likes_count, 'liked': liked})
             else:
                 print("Form not valid:", form.errors)
         except json.JSONDecodeError:
@@ -75,8 +78,69 @@ def like_post(request):
 
 
 
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt  # Import this decorator
+from .models import Comment
+import json
+
+@csrf_exempt  # Add this decorator to exempt CSRF token for simplicity (don't use in production)
+def add_comment(request, post_id):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+            text = data.get('text', '')
+            
+            # Assuming you have the 'Comment' model with fields 'user', 'post', 'text'
+            # Add some debug statements
+            print(f"Received comment for post {post_id} with text: {text}")
+            
+            Comment.objects.create(
+                user=request.user,
+                post_id=post_id,
+                text=text
+            )
+            
+            print("Comment successfully added to the database.")
+            
+            return JsonResponse({'success': True})
+        except json.JSONDecodeError as e:
+            print("Invalid JSON data. Error:", e)
+    
+    print("Invalid request or failed to add comment.")
+    return JsonResponse({'error': 'Invalid request or failed to add comment'})
 
 
 
 
 
+
+
+
+
+@csrf_exempt
+def add_comment(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+            post_id = data.get('post_id', None)
+            text = data.get('text', '')
+
+            if post_id is not None:
+                post = Post.objects.get(pk=post_id)
+
+                Comment.objects.create(
+                    user=request.user,
+                    post_id=post,  # Corrected from `post` to `post_id`
+                    text=text
+                )
+
+                print(f"Comment for post {post_id} added successfully.")
+                return JsonResponse({'success': True})
+            else:
+                print("Invalid request. Post ID is missing.")
+        except json.JSONDecodeError as e:
+            print("Invalid JSON data. Error:", e)
+        except Post.DoesNotExist:
+            print(f"Post with ID {post_id} does not exist.")
+    print("Invalid request or failed to add comment.")
+    return JsonResponse({'error': 'Invalid request or failed to add comment'})

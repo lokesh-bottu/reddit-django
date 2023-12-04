@@ -40,7 +40,6 @@
   {% for post_id, post_info in all_posts.items %}
   <div>
     <h1>This is post id{{post_id}}</h1>
-    <h3>{{ post_info.post_caption }}</h3>
     <p><strong>Caption:</strong> {{ post_info.post_caption }}</p>
     <p><strong>Description:</strong> {{ post_info.post_description }}</p>
 
@@ -48,12 +47,21 @@
     <p><strong>Like :</strong> <span id="likes_count_{{ post_id }}">{{ post_info.post_likes }}</span></p>
     <button id="like_button_{{ post_id }}" onclick="likePost({{ post_id }})">Like</button>
 
-   
-  </div>
+    {% for com_text in post_info.post_comments%}
+    <p>{{com_text}}</p>
+    {% endfor %}
+
+    <input type="text" id="comment_text_{{ post_id }}" placeholder="Enter your comment">
+    <button onclick="addComment({{ post_id }})">Submit Comment</button>
+
+
+  
+    </div>
   <hr>
   {% endfor %}
 
   <script>
+
     function togglePopup() {
       document.getElementById("popup-1").classList.toggle("active");
     }
@@ -76,11 +84,11 @@
         })
         .then(response => response.json())
         .then(data => {
-            // Update the likes count in the UI
+           
             console.log(`Likes count after action: ${data.likes_count}`);
             document.getElementById(`likes_count_${postId}`).innerText = data.likes_count;
 
-            // Update the like button text based on the liked status
+           
             const likeButton = document.getElementById(`like_button_${postId}`);
             if (likeButton) {
                 likeButton.innerText = data.liked ? 'Unlike' : 'Like';
@@ -90,7 +98,41 @@
     }
 
 
-    
+
+
+    function addComment(postId) {
+    const csrfToken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+    const commentTextElement = document.getElementById(`comment_text_${postId}`);
+    const commentText = commentTextElement.value;
+
+    console.log(`Adding comment for post ${postId}: ${commentText}`);
+    console.log(`CSRF Token: ${csrfToken}`);
+
+    fetch('{% url "user:add_comment" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken,
+        },
+        body: JSON.stringify({ post_id: postId, text: commentText }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log("Comment added successfully!");
+
+            
+            commentTextElement.value = '';
+
+        } else {
+            console.error("Failed to add comment.");
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+
+
 </script>
 
 </body>

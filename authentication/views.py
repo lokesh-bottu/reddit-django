@@ -48,7 +48,7 @@ def signin(request):
                 all_posts[post_id] = {
                         'post_caption': post.caption,
                         'post_description': post.description,
-                        'post_likes': (post.likesposts.count() - post.dislikesposts.count()),
+                        'post_likes': post.likes.count(),
                 }
 
             context = {'all_posts': all_posts,'username':username}
