@@ -48,15 +48,6 @@
     <p><strong>Like :</strong> <span id="likes_count_{{ post_id }}">{{ post_info.post_likes }}</span></p>
     <button id="like_button_{{ post_id }}" onclick="likePost({{ post_id }})">Like</button>
 
-    <div id="comments_section_{{ post_id }}">
-
-      {% for comment in comments %}
-        <p>{{ comment.user.username }}: {{ comment.text }}</p>
-      {% endfor %}
-    </div>
-
-    <input type="text" id="comment_input_{{ post_id }}" placeholder="Add a comment...">
-    <button onclick="commentPost({{ post_id }})">Comment</button>
    
   </div>
   <hr>
@@ -99,37 +90,7 @@
     }
 
 
-    function commentPost(postId) {
-        const commentInput = document.getElementById(`comment_input_${postId}`);
-        const commentText = commentInput.value.trim();
-
-        if (commentText !== "") {
-            const csrfToken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
-
-            console.log(`Adding comment to post ${postId}`);
-            console.log(`Comment text: ${commentText}`);
-            console.log(`CSRF Token: ${csrfToken}`);
-
-            fetch('{% url "comment_post" %}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-CSRFToken': csrfToken,
-                },
-                body: `post_id=${postId}&text=${commentText}`,
-            })
-            .then(response => response.json())
-            .then(data => {
-                // Update the comments section in the UI
-                const commentsSection = document.getElementById(`comments_section_${postId}`);
-                if (commentsSection) {
-                    commentsSection.innerHTML = data.comments_html;
-                }
-            })
-            .catch(error => console.error('Error:', error));
-        }
-    }
-
+    
 </script>
 
 </body>
