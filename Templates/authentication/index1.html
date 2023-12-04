@@ -42,6 +42,9 @@
 
     {% for post_id, post_info in all_posts.items %}
 
+
+    
+
         <div class="bg-container">
             <div class="primary-container">
                 <div class="post">
@@ -79,6 +82,24 @@
                                 <div class="post-reactions">
                                     <i class="fa-regular fa-bookmark"></i>
                                     <p>Save</p>
+                                </div>
+                                <br>
+                                <div class = "likes_dislikes">
+
+
+                                    <!-- like button -->
+                                    <button id="like_button_{{ post_id }}" onclick="likePost2({{ post_id }}, 1)">Like</button>
+                                    <span id="newlikes_count_{{ post_id }}">{{ post_info.newlikes }}</span>
+                                    <br>
+                                
+                                    <!-- Dislike button -->
+                                    <button id="dislike_button_{{ post_id }}" onclick="likePost2({{ post_id }}, 0)">Dislike</button>
+                                    <span id="newdislikes_count_{{ post_id }}">{{ post_info.newdislikes }}</span>
+                            
+                                    <br>
+                                    <h1>all likes</h1>
+                                    <span id="totalnewlikes_count_{{ post_id }}">{{ post_info.alllikes }}</span>
+                                
                                 </div>
                                 
                             </div>
@@ -177,6 +198,41 @@
 
                 } else {
                     console.error("Failed to add comment.");
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+
+
+
+
+     // JavaScript
+
+        function likePost2(postId, action) {
+            const csrfToken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+
+            console.log(`${action === 1 ? 'Liking' : 'Disliking'} post ${postId}`);
+            console.log(`CSRF Token: ${csrfToken}`);
+
+            fetch('{% url "user:like_post_2" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+                body: JSON.stringify({ post_id: postId, action: action }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                const totalCount = data.likes - data.dislikes;
+                document.getElementById(`totalnewlikes_count_${ post_id }`).innerText = totalCount;
+
+                // Update the UI with the total count
+                if (action === 1) {
+                    document.getElementById(`newlikes_count_${postId}`).innerText = totalCount;
+                } else {
+                    document.getElementById(`newdislikes_count_${postId}`).innerText = totalCount;
                 }
             })
             .catch(error => console.error('Error:', error));

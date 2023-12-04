@@ -38,6 +38,10 @@ class Post(models.Model):
     comments = models.ManyToManyField('Comment', related_name='post_comments', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+
+    newlikes = models.ManyToManyField(User, related_name='newliked_posts', blank=True)
+    newdislikes = models.ManyToManyField(User, related_name='newdisliked_posts', blank=True)
+
     def __str__(self):
         return f"{self.user.username} - {self.caption} - {self.created_at}"
 

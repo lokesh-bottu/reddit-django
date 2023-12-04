@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate,login
 # from .models import UserDetails
 from UserProfile.models import Post
 
-# Create your views here.
+
 def home(request):
     return render(request,'authentication/signin.html')
 
@@ -24,16 +24,11 @@ def signup(request):
         myuser.save()
         messages.success(request,"Your Account has been successfully created.")
         return redirect('signin')
-    
     return render(request,'authentication/signup.html')
 
 
-def signin(request):
 
-    
-
-
-
+def signin(request):    
     if(request.method == 'POST'):
         username = request.POST['username']
         password = request.POST['password']

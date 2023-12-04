@@ -27,7 +27,11 @@ def create_post_view(request):
                 'post_likes': post.likes.count(),
                 'post_comments':comments_list,
                 'user_name':post.user,
-                'comments_count':len(comments_list)
+                'comments_count':len(comments_list),
+                'newlikes':post.newlikes.count(),
+                'newdislikes':post.newdislikes.count(),
+                'alllikes':(post.newlikes.count()-post.newdislikes.count())
+
         }
 
 
@@ -80,36 +84,40 @@ def like_post(request):
 
 
 
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt  # Import this decorator
-from .models import Comment
-import json
+# from django.http import JsonResponse
+# from django.contrib.auth.decorators import login_required
+# from .forms import LikeForm
 
-@csrf_exempt  # Add this decorator to exempt CSRF token for simplicity (don't use in production)
-def add_comment(request, post_id):
+@csrf_exempt
+# views.py
+
+def like_post_2(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body.decode('utf-8'))
-            text = data.get('text', '')
-            
-            # Assuming you have the 'Comment' model with fields 'user', 'post', 'text'
-            # Add some debug statements
-            print(f"Received comment for post {post_id} with text: {text}")
-            
-            Comment.objects.create(
-                user=request.user,
-                post_id=post_id,
-                text=text
-            )
-            
-            print("Comment successfully added to the database.")
-            
-            return JsonResponse({'success': True})
-        except json.JSONDecodeError as e:
-            print("Invalid JSON data. Error:", e)
+            post_id = data.get('post_id')
+            action = data.get('action')
+            post = Post.objects.get(pk=post_id)
+            user = request.user
+
+            if action == 1:  # Like
+                post.newlikes.add(user)
+                post.newdislikes.remove(user)
+            elif action == 0:  # Dislike
+                post.newdislikes.add(user)
+                post.newlikes.remove(user)
+
+            likes_count = post.newlikes.count()
+            dislikes_count = post.newdislikes.count()
+
+            print(f"Post {post_id} {'liked' if action == 1 else 'disliked'} by {user.username}. New counts: Likes: {likes_count}, Dislikes: {dislikes_count}")
+            return JsonResponse({'likes': likes_count, 'dislikes': dislikes_count})
+        except json.JSONDecodeError:
+            print("Invalid JSON data")
     
-    print("Invalid request or failed to add comment.")
-    return JsonResponse({'error': 'Invalid request or failed to add comment'})
+    print("Invalid request")
+    return JsonResponse({'error': 'Invalid request'})
+
 
 @csrf_exempt
 def add_comment(request):
