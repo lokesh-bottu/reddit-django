@@ -53,12 +53,11 @@
         <button id="newdislike_button_{{ post_id }}" onclick="likePost2({{ post_id }}, 0)">Dislike</button>
         <span id="newdislikes_count_{{ post_id }}">{{ post_info.newdislikes }}</span>
 
-        <br>
-        <h1>all likes</h1>
-        <span id="totalnewlikes_count_{{ post_id }}">{{ post_info.alllikes }}</span>
     
-    </div>
+    </div> 
 
+
+    
 
         <div class="bg-container">
             <div class="primary-container">
@@ -68,7 +67,7 @@
                             <i class="fa-solid fa-up-long icons"></i>
                         </button>
                         <div>
-                            <p><span id="totalnewlikes_count_{{ post_id }}">{{ post_info.alllikes }}</span></p>
+                            <span id="totalnewlikes_count_{{ post_id }}">{{ post_info.alllikes }}</span>
                         </div>
                         <button id="newdislike_button_{{ post_id }}" onclick="likePost2({{ post_id }}, 0)">
                             <i class="fa-solid fa-down-long icons"></i>
