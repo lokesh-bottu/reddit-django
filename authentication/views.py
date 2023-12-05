@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate,login
 # from .models import UserDetails
-from UserProfile.models import Post
+from UserProfile.models import Post,Comment
 
 
 def home(request):
@@ -40,13 +40,26 @@ def signin(request):
             all_posts = {}
             for post in Post.objects.all():
                 post_id = post.id
+                id_comment = post.id
+                comments_list = []
+                for com in Comment.objects.filter(post_id = Post.objects.get(id = id_comment)):
+                    com_string = str(com.user)+"--"+str(com.text)
+                    comments_list.append(com_string)
+
                 all_posts[post_id] = {
                         'post_caption': post.caption,
                         'post_description': post.description,
                         'post_likes': post.likes.count(),
+                        'post_comments':comments_list,
+                        'user_name':post.user,
+                        'comments_count':len(comments_list),
+                        'newlikes':post.newlikes.count(),
+                        'newdislikes':post.newdislikes.count(),
+                        'alllikes':(post.newlikes.count()-post.newdislikes.count())
                 }
 
-            context = {'all_posts': all_posts,'username':username}
+
+            context = {'all_posts': all_posts}
             return render(request,'authentication/index1.html',context)
         else:
             messages.error(request, 'Incorrect username or password.')

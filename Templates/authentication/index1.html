@@ -60,17 +60,19 @@
     </div>
 
 
-    
-
         <div class="bg-container">
             <div class="primary-container">
                 <div class="post">
                     <div class="reations">
-                        <i class="fa-solid fa-up-long icons"></i>
+                        <button id="newlike_button_{{ post_id }}" onclick="likePost2({{ post_id }}, 1)">
+                            <i class="fa-solid fa-up-long icons"></i>
+                        </button>
                         <div>
-                            <p>1.5k</p>
+                            <p><span id="totalnewlikes_count_{{ post_id }}">{{ post_info.alllikes }}</span></p>
                         </div>
-                        <i class="fa-solid fa-up-long icons"></i>
+                        <button id="newdislike_button_{{ post_id }}" onclick="likePost2({{ post_id }}, 0)">
+                            <i class="fa-solid fa-down-long icons"></i>
+                        </button>
                     </div>
                     <div class="main-post">
                         <hr>
@@ -124,8 +126,10 @@
 
     {% endfor %}
 
-
+    <script src="https://kit.fontawesome.com/c0128b9bb4.js" crossorigin="anonymous"></script>
     <script>
+
+        
 
         function togglePopup() {
         document.getElementById("popup-1").classList.toggle("active");

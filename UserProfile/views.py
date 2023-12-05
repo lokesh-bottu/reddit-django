@@ -31,7 +31,6 @@ def create_post_view(request):
                 'newlikes':post.newlikes.count(),
                 'newdislikes':post.newdislikes.count(),
                 'alllikes':(post.newlikes.count()-post.newdislikes.count())
-
         }
 
 
