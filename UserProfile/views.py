@@ -107,16 +107,19 @@ def like_post_2(request):
                 post.newdislikes.add(user)
                 post.newlikes.remove(user)
 
-            likes_count = post.newlikes.count()
-            dislikes_count = post.newdislikes.count()
+            count = {
+                'likes_count': post.newlikes.count(),
+                'dislikes_count': post.newdislikes.count(),
+            }
 
-            print(f"Post {post_id} {'liked' if action == 1 else 'disliked'} by {user.username}. New counts: Likes: {likes_count}, Dislikes: {dislikes_count}")
-            return JsonResponse({'likes': likes_count, 'dislikes': dislikes_count})
+            print(f"Post {post_id} {'liked' if action == 1 else 'disliked'} by {user.username}. New counts: {count}")
+            return JsonResponse(count)
         except json.JSONDecodeError:
             print("Invalid JSON data")
-    
+
     print("Invalid request")
     return JsonResponse({'error': 'Invalid request'})
+
 
 
 @csrf_exempt
