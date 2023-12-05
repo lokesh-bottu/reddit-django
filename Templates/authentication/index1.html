@@ -11,16 +11,13 @@
 
 <body>
 
-
-    <!-- <h1>succesprafulsfully signed in {{username}}</h1> -->
     <button onclick="togglePopup()">Create Post</button>
-
     <div class="popup" id="popup-1">
         <div class="overlay"></div>
         <div class="content">
             <div class="close-btn" onclick="togglePopup()">&times;</div>
             <div class="form-container">
-                <form action="{% url 'user:create_post' %}" method="POST" class="form">
+                <form action="{% url 'user:create_post' %}" method="POST" class="form" enctype="multipart/form-data">
                     {% csrf_token %}
                     
                     <div class="form-group">
@@ -32,6 +29,10 @@
                         <label for="description">Description</label>
                         <textarea name="description" id="description" rows="10" cols="50" required=""></textarea>
                     </div>
+
+                    <div class="form-group">
+                        <input type="file" name="image_database" class="browse" accept="image/*">
+                    </div>
     
                     <button class="form-submit-btn" type="submit">Submit Post</button>
                 </form>
@@ -41,6 +42,16 @@
 
 
     {% for post_id, post_info in all_posts.items %}
+
+
+    <div style="display: none;">
+        <p>{{post_info.comments_count}} comments</p>
+        <input type="text" id="comment_text_{{ post_id }}" placeholder="Enter your comment">
+        <button onclick="addComment({{ post_id }})">Submit Comment</button>
+        {% for com_text in post_info.post_comments %}
+            <p>{{ com_text }}</p>
+        {% endfor %}
+    </div>
     <div class = "likes_dislikes" style="display: none;">
         <!-- like button -->
         <button id="newlike_button_{{ post_id }}" onclick="likePost2({{ post_id }}, 1)">Like</i></button>
@@ -52,9 +63,6 @@
         <span id="newdislikes_count_{{ post_id }}">{{ post_info.newdislikes }}</span>
 
     </div> 
-
-
-    
 
         <div class="bg-container">
             <div class="primary-container">
@@ -78,7 +86,14 @@
                                 <button>Join</button>
                             </div>
                             <p class="content">{{ post_info.post_caption }}</p>
-                            <img src="{% static 'image.jpeg'%}" class="img-content" alt="">
+
+
+                            {% if post_info.image %}
+                                <img src="{{ post_info.image }}" alt="Post Image" class="img-content">
+                            {% else %}
+                                <img src="{% static 'image.jpeg' %}" class="img-content" alt="Default Image">
+                            {% endif %}
+
                             <p>{{ post_info.post_description }}</p>
                             <div class="reaction-container">
                                 <div class = "post-reactions display-likes">

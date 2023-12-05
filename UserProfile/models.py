@@ -37,6 +37,7 @@ class Post(models.Model):
     likes = models.ManyToManyField(User, related_name='liked_posts', blank=True)
     comments = models.ManyToManyField('Comment', related_name='post_comments', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    image = models.ImageField(upload_to='post_images/', blank=True, null=True)
 
 
     newlikes = models.ManyToManyField(User, related_name='newliked_posts', blank=True)

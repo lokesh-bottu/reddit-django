@@ -20,6 +20,13 @@ def create_post_view(request):
         for com in Comment.objects.filter(post_id = Post.objects.get(id = id_comment)):
             com_string = str(com.user)+"--"+str(com.text)
             comments_list.append(com_string)
+        
+        image_url = ''
+    
+        if post.image:
+            # Build absolute URL for the image
+            image_url = request.build_absolute_uri(post.image.url)
+            print("this is image url", image_url)
 
         all_posts[post_id] = {
                 'post_caption': post.caption,
@@ -30,7 +37,8 @@ def create_post_view(request):
                 'comments_count':len(comments_list),
                 'newlikes':post.newlikes.count(),
                 'newdislikes':post.newdislikes.count(),
-                'alllikes':(post.newlikes.count()-post.newdislikes.count())
+                'alllikes':(post.newlikes.count()-post.newdislikes.count()),
+                'image': image_url,
         }
 
 
@@ -38,10 +46,13 @@ def create_post_view(request):
     if(request.method == "POST"):
         caption = request.POST['caption']
         description = request.POST['description']
+        image = request.FILES.get('image_database')
         post = Post.objects.create(
         user=request.user,
         caption = caption,
-        description = description
+        description = description,
+        image = image
+        
         )
         post.save()
         return redirect('user:create_post')

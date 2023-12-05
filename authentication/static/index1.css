@@ -246,8 +246,8 @@
 }
 .comment-section{
   background-color: #fff;
-  padding: 10px;
   display: none;
+  padding-left: 10px;
 }
 .active-comments{
   display: block;
@@ -270,7 +270,6 @@
       align-items: center;
   }
 }
-
 
 
 .display-likes{
