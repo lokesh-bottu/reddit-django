@@ -41,19 +41,16 @@
 
 
     {% for post_id, post_info in all_posts.items %}
-    <div class = "likes_dislikes">
-
-
+    <div class = "likes_dislikes" style="display: none;">
         <!-- like button -->
-        <button id="newlike_button_{{ post_id }}" onclick="likePost2({{ post_id }}, 1)">Like</button>
+        <button id="newlike_button_{{ post_id }}" onclick="likePost2({{ post_id }}, 1)">Like</i></button>
         <span id="newlikes_count_{{ post_id }}">{{ post_info.newlikes }}</span>
         <br>
     
         <!-- Dislike button -->
-        <button id="newdislike_button_{{ post_id }}" onclick="likePost2({{ post_id }}, 0)">Dislike</button>
+        <button id="newdislike_button_{{ post_id }}" onclick="likePost2({{ post_id }}, 0)"><i class="fa-solid fa-down-long icons"></i></button>
         <span id="newdislikes_count_{{ post_id }}">{{ post_info.newdislikes }}</span>
 
-    
     </div> 
 
 
