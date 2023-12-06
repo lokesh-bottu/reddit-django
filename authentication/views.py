@@ -46,6 +46,14 @@ def signin(request):
                     com_string = str(com.user)+"--"+str(com.text)
                     comments_list.append(com_string)
 
+                
+                image_url = ''
+            
+                if post.image:
+                    image_url = request.build_absolute_uri(post.image.url)
+                    print("this is image url", image_url)
+                    
+
                 all_posts[post_id] = {
                         'post_caption': post.caption,
                         'post_description': post.description,
@@ -55,7 +63,8 @@ def signin(request):
                         'comments_count':len(comments_list),
                         'newlikes':post.newlikes.count(),
                         'newdislikes':post.newdislikes.count(),
-                        'alllikes':(post.newlikes.count()-post.newdislikes.count())
+                        'alllikes':(post.newlikes.count()-post.newdislikes.count()),
+                        'image': image_url,
                 }
 
 

@@ -4,6 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.template.loader import render_to_string
 
 from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import login_required
 
 from django.http import HttpResponse,JsonResponse
 from .models import Post,Comment
@@ -24,9 +25,10 @@ def create_post_view(request):
         image_url = ''
     
         if post.image:
-            # Build absolute URL for the image
             image_url = request.build_absolute_uri(post.image.url)
             print("this is image url", image_url)
+            
+
 
         all_posts[post_id] = {
                 'post_caption': post.caption,
@@ -159,3 +161,83 @@ def add_comment(request):
             print(f"Post with ID {post_id} does not exist.")
     print("Invalid request or failed to add comment.")
     return JsonResponse({'error': 'Invalid request or failed to add comment'})
+
+
+
+
+
+def post_comment_view(request,id):
+    print("function callled",id)
+    if id is not None:
+        post = Post.objects.get(pk=id)
+        user_name = post.user
+
+        Comment.objects.create(
+            user=user_name,
+            post_id=post,
+            text=request.POST.get('comment_text')
+        )
+
+    return redirect(request.META.get('HTTP_REFERER'))
+
+
+
+def comment_view(request,id):
+    post = Post.objects.get(pk=id)
+    comments = {}
+    for com  in Comment.objects.filter(post_id = Post.objects.get(id = id)):
+        comments[com.id] = {'username':com.user,
+                            'text':com.text,
+                            'created_at':com.created_at,
+                            'alllikes':(com.likes.count() - com.dislikes.count())
+                            
+                            }
+
+    return render(request, 'userposts/comments.html', {'post':post, 'comments':comments,'post_id':id})
+
+
+
+
+def like_comment(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+            comment_id = data.get('comment_id')
+            action = data.get('action')
+            com_instance = Comment.objects.get(pk=comment_id)
+            user = request.user
+
+            if action == 1:  # Like
+                com_instance.likes.add(user)
+                com_instance.dislikes.remove(user)
+            elif action == 0:  # Dislike
+                com_instance.dislikes.add(user)
+                com_instance.likes.remove(user)
+
+            count = {
+                'likes_count': com_instance.likes.count(),
+                'dislikes_count': com_instance.dislikes.count(),
+            }
+
+            print(f"Comment {comment_id} {'liked' if action == 1 else 'disliked'} by {user.username}. New counts: {count}")
+            return JsonResponse(count)
+        except json.JSONDecodeError:
+            print("Invalid JSON data")
+
+    print("Invalid request")
+    return JsonResponse({'error': 'Invalid request'})
+
+
+
+
+
+
+
+
+@login_required
+def profile_view(request):
+    user = request.user
+    context = {
+        'user': user,
+    }
+    return render(request, 'authentication/profile.html', context)

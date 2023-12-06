@@ -19,8 +19,8 @@
             <div class="form-container">
                 <form action="{% url 'user:create_post' %}" method="POST" class="form" enctype="multipart/form-data">
                     {% csrf_token %}
-                    
-                    <div class="form-group">
+
+                        <div class="form-group">
                         <label for="caption">Caption</label>
                         <input type="text" id="caption" name="caption" required="">
                     </div>
@@ -40,6 +40,15 @@
         </div>
     </div>
 
+
+
+
+
+    
+
+
+
+    
 
     {% for post_id, post_info in all_posts.items %}
 
@@ -87,7 +96,6 @@
                             </div>
                             <p class="content">{{ post_info.post_caption }}</p>
 
-
                             {% if post_info.image %}
                                 <img src="{{ post_info.image }}" alt="Post Image" class="img-content">
                             {% else %}
@@ -101,8 +109,10 @@
                                     <button id="like_button_{{ post_id }}" onclick="likePost({{ post_id }})">Like</button>
                                     
                                 </div>
-                                <div class="post-reactions" onclick="openComments()">
-                                    <i class="fa-regular fa-comment"></i>
+                                <div class="post-reactions">
+                                    <a href="{% url 'user:popup_comment' id=post_id %}">
+                                        <i class="fa-regular fa-comment"></i>
+                                    </a>
                                     <p>{{post_info.comments_count}} comments</p>
                                 </div>
                                 <div class="post-reactions">
@@ -114,8 +124,6 @@
                                     <p>Save</p>
                                 </div>
                                 <br>
-                                
-                                
                             </div>
                             
                         </div>
@@ -140,7 +148,8 @@
     <script src="https://kit.fontawesome.com/c0128b9bb4.js" crossorigin="anonymous"></script>
     <script>
 
-        
+
+                
 
         function togglePopup() {
         document.getElementById("popup-1").classList.toggle("active");
@@ -151,6 +160,9 @@
         function openComments(){
             comments.classList.toggle('active-comments')
         }
+
+
+
 
     
 
@@ -225,33 +237,31 @@
 
      // JavaScript
 
-     function likePost2(postId, action) {
-    const csrfToken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+    function likePost2(postId, action) {
+        const csrfToken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
 
-    console.log(`${action === 1 ? 'Liking' : 'Disliking'} post ${postId}`);
-    console.log(`CSRF Token: ${csrfToken}`);
+        console.log(`${action === 1 ? 'Liking' : 'Disliking'} post ${postId}`);
+        console.log(`CSRF Token: ${csrfToken}`);
 
-    fetch('{% url "user:like_post_2" %}', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': csrfToken,
-        },
-        body: JSON.stringify({ post_id: postId, action: action }),
-    })
-    .then(response => response.json())
-    .then(data => {
-        const likesCount = data.likes_count;
-        const dislikesCount = data.dislikes_count;
-        // Update UI with new counts
-        document.getElementById(`newlikes_count_${postId}`).innerText = likesCount;
-        document.getElementById(`newdislikes_count_${postId}`).innerText = dislikesCount;
-        document.getElementById(`totalnewlikes_count_${postId}`).innerText = (likesCount-dislikesCount);
-    })
-    .catch(error => console.error('Error:', error));
-}
-
-
+        fetch('{% url "user:like_post_2" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken,
+            },
+            body: JSON.stringify({ post_id: postId, action: action }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            const likesCount = data.likes_count;
+            const dislikesCount = data.dislikes_count;
+            // Update UI with new counts
+            document.getElementById(`newlikes_count_${postId}`).innerText = likesCount;
+            document.getElementById(`newdislikes_count_${postId}`).innerText = dislikesCount;
+            document.getElementById(`totalnewlikes_count_${postId}`).innerText = (likesCount-dislikesCount);
+        })
+        .catch(error => console.error('Error:', error));
+    }
     </script>
 </body>
 </html>
