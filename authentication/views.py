@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate,login
 # from .models import UserDetails
-from UserProfile.models import Post,Comment
+from UserProfile.models import Post,Comment,UserProfile
 
 
 def home(request):
@@ -81,3 +81,21 @@ def signout(request):
 
 
 
+
+
+def editprofile(request):
+    if request.method == 'POST':
+        user = request.user
+        user.first_name = request.POST['firstname']
+        user.last_name = request.POST['lastname']
+        user.email = request.POST['email']
+        user.save()
+
+        profile = UserProfile.objects.get_or_create(user=user)[0]
+        profile.image = request.FILES.get('image', profile.image)
+        profile.save()
+
+        messages.success(request, 'Your profile has been updated successfully.')
+        return redirect('editprofile')
+
+    return render(request, 'authentication/editprofile.html')

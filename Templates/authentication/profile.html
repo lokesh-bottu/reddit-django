@@ -1,0 +1,71 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'profile_edit.css' %}">
+</head>
+<body>
+
+
+
+    <button type="button" id ="create"><div><p>Edit</p></div></button>
+    <div class="create_post">
+        <div class="popup_post">
+            <div class="a"> 
+                <h3>Edit Profile</h3>
+                <button class="close_btn1">&times;</button>
+            </div>
+            <div>
+                
+                <form action="{% url 'user:editprofile' %}" method="POST" class="form card" enctype="multipart/form-data">
+                    {% csrf_token %}
+                   
+                    <div class="field">
+                      <label for="First Name">First Name</label>
+                      <input class="input"  type="text" placeholder="First Name" id="fname" name = fname>
+                    </div>
+                    <div class="field">
+                      <label for="Last Name">Last Name</label>
+                      <input class="input"  type="text" placeholder="Last Name" id="lname" name = lname>
+                    </div>
+                    <div class="field">
+                        <label for="Email">Email</label>
+                        <input class="input"  type="text" placeholder="Email" id="email" name = email>
+                    </div>
+
+                    <div class = "field">
+                        <input type="file" name="image_database" class="browse" accept="image/*">
+                    </div>
+
+                    <div class="field">
+                      <button type="submit" class="button">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+    <h1>Welcome, {{ user.username }}!</h1>
+    <p>First Name: {{ user.first_name }}</p>
+    <p>Last Name: {{ user.last_name }}</p>
+    <p>Email: {{ user.email }}</p>
+
+
+
+    <script>
+        document.querySelector("#create").addEventListener("click", function () {
+            document.querySelector(".popup_post").classList.add("active1");
+        });
+    
+        document.querySelector(".close_btn1").addEventListener("click", function () {
+            document.querySelector(".popup_post").classList.remove("active1");
+        });
+    </script>
+</body>
+</html>

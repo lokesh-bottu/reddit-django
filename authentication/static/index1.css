@@ -328,3 +328,71 @@
   background-color: lightgray;
   cursor: pointer;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+content1{
+  display: flex ;
+  flex-direction: row;
+  align-items: center;
+  /* padding: 20px; */
+
+}
+.logo-heading{
+  padding: 10px;
+  color: #ff441e;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-weight: bold;
+}
+.search-bar{
+  padding: 10px;
+  padding-left: 30px;
+  font-size: large;
+  width: 50%;
+  border-radius: 12px;
+  margin: auto;
+   
+}
+.search-icon{
+  position: relative;
+  left: 30px;
+}
+.navbar{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 20px;
+  align-items: center;
+}
+.button2{
+  background-color: #ff441e;
+  color: white;
+  padding: 10px 25px;
+  margin: 0 10px;
+  font-size: 15px;
+  border: none;
+  border-radius: 15px;
+}
+.button1{
+  background-color: #f8f9fa;
+  color: black;
+  padding: 10px 25px;
+  margin: 0 10px;
+  font-size: 15px;
+  border: none;
+  border-radius: 15px;
+}
+.search-container{
+  width: 50%;
+}

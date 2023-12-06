@@ -53,5 +53,27 @@ class Comment(models.Model):
     likes = models.ManyToManyField(User, related_name='liked_comments', blank=True)
     dislikes = models.ManyToManyField(User, related_name='disliked_comments', blank=True)
     created_at = models.DateTimeField(default=timezone.now)
+    parent_comment = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE)
     def __str__(self):
         return f"{self.user.username} - {self.post_id.caption} - {self.created_at}"
+
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='profile_images/', null=True, blank=True)
+
+    def __str__(self):
+        return self.user.username
+
+
+
+
+# class Followings(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE,blank=True)
+#     followers = models.ManyToManyField(User, related_name='followers', blank=True)
+#     follow = models.ManyToManyField(User, related_name='follow', blank=True)
+
+
+
+    # def __str__(self):
+    #     return f'{self.follow} follows {self.followers}'

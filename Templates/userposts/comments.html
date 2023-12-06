@@ -46,12 +46,11 @@
                         <p>Commented by {{ comment_info.username }}</p>
                         <p>{{ comment_info.text }}</p>
                     </div>
-
+                    
                 </div>
                 
                 {% endfor %}
                 
-
 
                 <div class="post">
                     <form method="POST" action="{% url 'user:post_comment_view' id=post.id %}">
@@ -69,7 +68,6 @@
     <script src="https://kit.fontawesome.com/c0128b9bb4.js" crossorigin="anonymous"></script>
     <script>
         
-
         function likecomment(commentId, action) {
         const csrfToken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
 
@@ -97,9 +95,6 @@
     }
 
     </script>
-
-
-
 
 </body>
 </html>

@@ -14,6 +14,9 @@ urlpatterns = [
     path('post_comment_view/<int:id>', post_comment_view, name='post_comment_view'),
     path('like_comment/', like_comment, name='like_comment'),
     path('profile/', profile_view, name='profile'),
+    # path('editprofile',editprofile,name="editprofile"),
+    # path('viewprofile/<str:username>/', viewprofile, name='viewprofile'),
+
 
 
 ]
