@@ -82,20 +82,3 @@ def signout(request):
 
 
 
-
-def editprofile(request):
-    if request.method == 'POST':
-        user = request.user
-        user.first_name = request.POST['firstname']
-        user.last_name = request.POST['lastname']
-        user.email = request.POST['email']
-        user.save()
-
-        profile = UserProfile.objects.get_or_create(user=user)[0]
-        profile.image = request.FILES.get('image', profile.image)
-        profile.save()
-
-        messages.success(request, 'Your profile has been updated successfully.')
-        return redirect('editprofile')
-
-    return render(request, 'authentication/editprofile.html')

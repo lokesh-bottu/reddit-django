@@ -2,7 +2,7 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
-from .views import create_post_view,like_post,add_comment,like_post_2,comment_view,post_comment_view,like_comment,profile_view
+from .views import create_post_view,like_post,add_comment,like_post_2,comment_view,post_comment_view,like_comment
 
 app_name = 'user'
 urlpatterns = [
@@ -13,11 +13,6 @@ urlpatterns = [
     path('popup_comment/<int:id>', comment_view, name='popup_comment'),
     path('post_comment_view/<int:id>', post_comment_view, name='post_comment_view'),
     path('like_comment/', like_comment, name='like_comment'),
-    path('profile/', profile_view, name='profile'),
-    # path('editprofile',editprofile,name="editprofile"),
-    # path('viewprofile/<str:username>/', viewprofile, name='viewprofile'),
-
-
 
 ]
 

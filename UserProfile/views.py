@@ -170,7 +170,7 @@ def post_comment_view(request,id):
     print("function callled",id)
     if id is not None:
         post = Post.objects.get(pk=id)
-        user_name = post.user
+        user_name = request.user
 
         Comment.objects.create(
             user=user_name,
@@ -233,11 +233,3 @@ def like_comment(request):
 
 
 
-
-@login_required
-def profile_view(request):
-    user = request.user
-    context = {
-        'user': user,
-    }
-    return render(request, 'authentication/profile.html', context)
