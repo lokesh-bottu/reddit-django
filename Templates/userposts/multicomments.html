@@ -1,0 +1,87 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link rel="stylesheet" type="text/css" href="{% static 'comment1.css' %}">
+</head>
+<body>
+
+    <div class="comment_box">
+        {% for comment_id, comment_info in comments.items %}
+
+
+        <div class = "fullcomment">
+
+            <div class="reations" style="margin-top: 6px;">
+                <button id="likecomment{{ comment_id }}" onclick="likecomment({{ comment_id }}, 1)">
+                    <i class="fa-solid fa-up-long icons"></i>
+                </button>
+            
+                <div style="margin-left: 5px;">
+                    <span id="comments_count_{{ comment_id }}">{{ comment_info.alllikes }}</span>
+                </div>
+            
+                <button id="dislikecomment{{ comment_id }}" onclick="likecomment({{ comment_id }}, 0)">
+                    <i class="fa-solid fa-down-long icons"></i>
+                </button>
+            </div>
+            
+            <div class="comment">
+                <p>Commented by {{ comment_info.username }}</p>
+                <p>{{ comment_info.text }}</p>
+            </div>
+            
+        </div>
+        
+        {% endfor %}
+        
+
+        <div class="post">
+            <form method="POST" action="{% url 'user:post_comment_view' id=post.id %}">
+                
+                {% csrf_token %}
+                <input type="text" class="comment"  name="comment_text" placeholder="Add a comment...">
+                <button type="submit">Post</button>
+            
+            </form>
+        </div>
+    </div>
+    <script src="https://kit.fontawesome.com/c0128b9bb4.js" crossorigin="anonymous"></script>
+    <script>
+        
+        function likecomment(commentId, action) {
+        const csrfToken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+
+        console.log(`${action === 1 ? 'Liking' : 'Disliking'} comment ${commentId}`);
+        console.log(`CSRF Token: ${csrfToken}`);
+
+        fetch('{% url "user:like_comment" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken,
+            },
+            body: JSON.stringify({ comment_id: commentId, action: action }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            const likesCount = data.likes_count;
+            const dislikesCount = data.dislikes_count;
+            // Update UI with new counts
+            // document.getElementById(`newlikes_count_${postId}`).innerText = likesCount;
+            // document.getElementById(`newdislikes_count_${postId}`).innerText = dislikesCount;
+            document.getElementById(`comments_count_${commentId}`).innerText = (likesCount-dislikesCount);
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    </script>
+
+   
+
+</body>
+</html>

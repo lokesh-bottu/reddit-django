@@ -193,7 +193,7 @@ def comment_view(request,id):
                             
                             }
 
-    return render(request, 'userposts/comments.html', {'post':post, 'comments':comments,'post_id':id})
+    return render(request, 'userposts/multicomments.html', {'post':post, 'comments':comments,'post_id':id})
 
 
 

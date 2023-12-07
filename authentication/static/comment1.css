@@ -1,0 +1,8 @@
+.fullcomment{
+    display: flex;
+    flex-direction: row;
+}
+
+.comment{
+    margin-left: 10px;
+}
