@@ -12,6 +12,10 @@
 <body>
 
     <button onclick="togglePopup()">Create Post</button>
+
+
+    <button><a href = "{%url 'user:editprofile'%}">Profile</a></button>
+
     <button><a href = "{% url 'signout' %}">Signout</a></button>
     <div class="popup" id="popup-1">
         <div class="overlay"></div>
@@ -42,8 +46,6 @@
     </div>
 
     
-
-
     <nav class="navbar">
         <div class="content1">
             <img src="reddit2.png" width="50px" alt="">
@@ -108,7 +110,13 @@
                         <div class="main-content">
                             
                             <div class="community-container"> 
-                                <p class="community">Posted by {{ post_info.user_name }}</p>
+
+                                <p class="community">
+                                    <a href="{% url 'user:viewprofile' username=post_info.user_name %}">
+                                        Posted by {{ post_info.user_name }}
+                                    </a>
+                                </p>
+                                
                                 <button>Join</button>
                             </div>
                             <p class="content">{{ post_info.post_caption }}</p>

@@ -4,6 +4,10 @@ from django.conf.urls.static import static
 from django.urls import path
 from .views import create_post_view,like_post,add_comment,like_post_2,comment_view,post_comment_view,like_comment,add_reply
 
+from .views import viewprofile,editprofile
+
+
+
 app_name = 'user'
 urlpatterns = [
     path('create_post/', create_post_view, name='create_post'),
@@ -14,8 +18,10 @@ urlpatterns = [
     path('post_comment_view/<int:id>', post_comment_view, name='post_comment_view'),
     path('like_comment/', like_comment, name='like_comment'),
     path('add_reply/<int:id>', add_reply, name='add_reply'),
-    
+    path('viewprofile/<str:username>/', viewprofile, name='viewprofile'),
+    path('editprofile/', editprofile, name='editprofile'),
 
+    
 ]
 
 if settings.DEBUG:

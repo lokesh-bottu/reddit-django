@@ -75,7 +75,6 @@ class UserProfile(models.Model):
 
 
 
-
 # class Followings(models.Model):
 #     user = models.ForeignKey(User, on_delete=models.CASCADE,blank=True)
 #     followers = models.ManyToManyField(User, related_name='followers', blank=True)

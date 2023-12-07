@@ -7,7 +7,7 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 
 from django.http import HttpResponse,JsonResponse
-from .models import Post,Comment,Replies
+from .models import Post,Comment,Replies,UserProfile
 from django.contrib.auth.models import User
 from .forms import LikeForm
 import json
@@ -29,7 +29,7 @@ def create_post_view(request):
             print("this is image url", image_url)
             
 
-
+        user_image = get_object_or_404(UserProfile, user=post.user)
         all_posts[post_id] = {
                 'post_caption': post.caption,
                 'post_description': post.description,
@@ -41,6 +41,8 @@ def create_post_view(request):
                 'newdislikes':post.newdislikes.count(),
                 'alllikes':(post.newlikes.count()-post.newdislikes.count()),
                 'image': image_url,
+                'user_image':user_image
+                
         }
 
 
@@ -200,18 +202,21 @@ def comment_view(request,id):
     post = Post.objects.get(pk=id)
     comments = {}
     for com  in Comment.objects.filter(post_id = Post.objects.get(id = id)):
-        
+
+        # user_image = get_object_or_404(UserProfile, user=com.user)
+
         comments[com.id] = {'username':com.user,
                             'text':com.text,
                             'created_at':com.created_at,
                             'alllikes':(com.likes.count() - com.dislikes.count()),
+                            # 'image':user_image
                             }
         reps={} 
         for replies in Replies.objects.filter(comment_id = com):
+            # reply_image = get_object_or_404(UserProfile,user = replies.user)   #'image':reply_image
             reps[replies.id]= {'user':str(replies.user),'text':replies.text}
         comments[com.id]['replies'] = reps
             
-
     return render(request, 'userposts/multicomments.html', {'post':post, 'comments':comments,'post_id':id})
 
 
@@ -263,3 +268,43 @@ def like_comment(request):
 
 
 
+def editprofile(request):
+    if request.method == 'POST':
+        user = request.user
+        user.first_name = request.POST['firstname']
+        user.last_name = request.POST['lastname']
+        user.email = request.POST['email']
+        user.save()
+
+        profile = UserProfile.objects.get_or_create(user=user)[0]
+        profile.image = request.FILES.get('image', profile.image)
+        profile.save()
+
+    user = request.user
+    posts = Post.objects.all().count()
+    context = {'user':user,
+               'posts':posts,
+               }
+    return render(request, 'userposts/editprofile.html',context)
+
+
+def viewprofile(request, username):
+
+    
+    # print(username)
+    # post = get_object_or_404(UserProfile, user__username='lokesh')
+    # print(post)
+    # print(user_obj)   #'image':reply_image     #,'user_image':user_obj
+    context = {'user': username}
+
+    return render(request, 'userposts/viewprofile.html', context)
+
+
+
+
+
+
+
+
+
+    
