@@ -16,7 +16,7 @@
 
         <div class = "fullcomment">
 
-            <div class="reations" style="margin-top: 6px;">
+            <div class="reations" style="margin-top: 20px;">
                 <button id="likecomment{{ comment_id }}" onclick="likecomment({{ comment_id }}, 1)">
                     <i class="fa-solid fa-up-long icons"></i>
                 </button>
@@ -33,6 +33,28 @@
             <div class="comment">
                 <p>Commented by {{ comment_info.username }}</p>
                 <p>{{ comment_info.text }}</p>
+
+                <div class = "replies">
+                    <p>
+                        {% for reply_id,reply in comment_info.replies.items %}
+                            {{ reply.text }} replied by {{ reply.user }}<br>
+                        {% endfor %}
+                    </p>
+                    
+                </div>
+
+                
+
+                <button onclick="showReplyForm({{ comment_id }})">Reply</button>
+                <div id="replyForm{{ comment_id }}" style="display: none;">
+                    <form method="POST" action="{% url 'user:add_reply' id=comment_id %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="reply_comment" value="{{ comment_id }}">
+                        <input type="text" class="reply" name="reply" placeholder="Add a reply...">
+                        <button type="submit">Post Reply</button>
+                    </form>
+                </div>
+
             </div>
             
         </div>
@@ -79,9 +101,18 @@
         .catch(error => console.error('Error:', error));
     }
 
+
+
+
+    function showReplyForm(commentId) {
+        const replyForm = document.getElementById(`replyForm${commentId}`);
+        if (replyForm.style.display === 'none' || !replyForm.style.display) {
+            replyForm.style.display = 'block';
+        } else {
+            replyForm.style.display = 'none';
+        }
+    }
+
     </script>
-
-   
-
 </body>
 </html>

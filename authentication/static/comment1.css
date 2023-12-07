@@ -1,8 +1,16 @@
 .fullcomment{
     display: flex;
     flex-direction: row;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 .comment{
     margin-left: 10px;
+    margin-top: 0px;
+}
+
+
+.replies{
+    margin-left: 20px;
 }

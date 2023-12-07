@@ -43,6 +43,7 @@ class Post(models.Model):
     newlikes = models.ManyToManyField(User, related_name='newliked_posts', blank=True)
     newdislikes = models.ManyToManyField(User, related_name='newdisliked_posts', blank=True)
 
+
     def __str__(self):
         return f"{self.user.username} - {self.caption} - {self.created_at}"
 
@@ -56,6 +57,13 @@ class Comment(models.Model):
     # parent_comment = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE)
     def __str__(self):
         return f"{self.user.username} - {self.post_id.caption} - {self.created_at}"
+
+
+
+class Replies(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    comment_id = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name='comment_replies')
+    text = models.TextField()
 
 
 class UserProfile(models.Model):

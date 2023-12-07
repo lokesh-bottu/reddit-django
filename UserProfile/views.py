@@ -7,7 +7,7 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 
 from django.http import HttpResponse,JsonResponse
-from .models import Post,Comment
+from .models import Post,Comment,Replies
 from django.contrib.auth.models import User
 from .forms import LikeForm
 import json
@@ -61,7 +61,6 @@ def create_post_view(request):
     else:
         return render(request, 'authentication/index1.html', context)
     
-
 
 @csrf_exempt
 def like_post(request):
@@ -182,18 +181,49 @@ def post_comment_view(request,id):
 
 
 
+def add_reply(request,id):
+    print("reply fucntion called")
+    if id is not None:
+        comment_inst = Comment.objects.get(pk=id)
+        loggeduser_name = request.user
+        Replies.objects.create(
+            user=loggeduser_name,
+            comment_id = comment_inst,
+            text=request.POST.get('reply')
+        )
+    return redirect(request.META.get('HTTP_REFERER'))
+
+
+
+
 def comment_view(request,id):
     post = Post.objects.get(pk=id)
     comments = {}
     for com  in Comment.objects.filter(post_id = Post.objects.get(id = id)):
+        
         comments[com.id] = {'username':com.user,
                             'text':com.text,
                             'created_at':com.created_at,
-                            'alllikes':(com.likes.count() - com.dislikes.count())
-                            
+                            'alllikes':(com.likes.count() - com.dislikes.count()),
                             }
+        reps={} 
+        for replies in Replies.objects.filter(comment_id = com):
+            reps[replies.id]= {'user':str(replies.user),'text':replies.text}
+        comments[com.id]['replies'] = reps
+            
 
     return render(request, 'userposts/multicomments.html', {'post':post, 'comments':comments,'post_id':id})
+
+
+
+
+# def comment_view(request, id):
+#     post = Post.objects.get(pk=id)
+#     comments = Comment.objects.filter(post_id_id=id, parent_comment__isnull=True)
+#     nested_comments = Comment.objects.filter(post_id_id=id, parent_comment__isnull=False)
+
+#     context = {'post': post, 'comments': comments, 'nested_comments': nested_comments}
+#     return render(request, 'userposts/multicomments.html', context)
 
 
 
