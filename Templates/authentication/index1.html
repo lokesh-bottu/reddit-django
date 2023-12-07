@@ -6,14 +6,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Index1</title>
+  <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
   <link rel="stylesheet" type="text/css" href="{% static 'index1.css' %}">
 </head>
 
 <body>
 
     <button onclick="togglePopup()">Create Post</button>
-
-
     <button><a href = "{%url 'user:editprofile'%}">Profile</a></button>
 
     <button><a href = "{% url 'signout' %}">Signout</a></button>
@@ -45,133 +47,241 @@
         </div>
     </div>
 
-    
-    <nav class="navbar">
-        <div class="content1">
-            <img src="reddit2.png" width="50px" alt="">
-            <h1 class="logo-heading">Reddit</h1>
+
+
+    <div class="header">
+        <div class="header__left">
+          <i id="menu" class="material-icons menu-icon">menu</i>
+          <a href="#" title="YouTube">
+            <img
+              src="https://cdn.mos.cms.futurecdn.net/8gzcr6RpGStvZFA2qRt4v6.jpg"
+              alt=""/>
+            </a>
         </div>
-        <div class="search-container">
-            <div>
-                <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                <input class="search-bar" type="text" placeholder="Search">
+  
+        <div class="header__search">
+          <form action="">
+            <input type="text" placeholder="Search" />
+            <button><i class="material-icons">search</i></button>
+          </form>
+        </div>
+  
+        <div class="header__icons">
+          <i class="material-icons display-this search-icon">search</i>
+          <a href="#" title="Upload video">
+            <i class="material-icons">video_call</i></a>
+          <i class="material-icons">apps</i>
+          <i class="material-icons">notifications</i>
+          {% if user.is_authenticated %}
+          <button class="profile-button" onclick=toggleMenu() >
+            
+            
+            <ul class="menu-list" id="menuList">
+              <li><a href="#">
+                  <div class="contain">
+                      <i class="material-icons  menu-icons">person</i>
+                      <span class="text">
+                          My Account
+                      </span>
+                  </div>
+              </a></li>
+              <li><a href="#">
+                  <div class="contain">
+                      <i class="material-icons menu-icons">history</i>
+                      <span class="text">
+                          History
+                      </span>
+                  </div>
+              </a></li>
+              <li><a href="#">
+                  <div class="contain">
+                      <i class="material-icons menu-icons">logout</i>
+                      <span class="text">
+                          Sign out
+                      </span>
+                  </div>
+              </a></li>
+            </ul>
+                
+          </button>
+          {% else %}
+          <a href="#" title="Login/Register">
+            <i class="material-icons display-this">account_circle</i>
+          </a>
+          {% endif %}
+        </div>
+      </div>
+      <!-- Header Ends -->
+  
+      <!-- Main Body Starts -->
+      <div class="mainBody">
+        <!-- Sidebar Starts -->
+  
+        <div class="sidebar">
+          <div class="sidebar__categories">
+            <a href="#">
+              <div class="sidebar__category">
+                <i class="material-icons">home</i>
+                <span class="icon-text">Home</span>
+              </div>
+            </a>
+            <a href="#">
+              <div class="sidebar__category">
+                <i class="material-icons">add</i>
+                <span class="icon-text">Create Post</span>
+              </div>
+            </a>
+            <a href="#">
+              <div class="sidebar__category">
+                <i class="material-icons">subscriptions</i>
+                <span class="icon-text">Subcriptions</span>
+              </div>
+            </a>
+          </div>
+          <hr />
+          <div class="sidebar__categories">
+  
+            <div class="sidebar__category">
+              <i class="material-icons">history</i>
+              <span class="icon-text">History</span>
             </div>
-        </div>
-        <div>
-            <div>
-                <button class="button1">Sign Up</button>
-                <button class="button2">Login</button>
-
+            <div class="sidebar__category">
+              <i class="material-icons">play_arrow</i>
+              <span class="icon-text">Your Videos</span>
             </div>
+            <a href="#">
+              <div class="sidebar__category">
+                <i class="material-icons">thumb_up</i>
+                <span class="icon-text">Liked Videos</span>
+              </div>
+            </a>
+          </div>
+          <hr />
         </div>
-    </nav>
-
-
-
-    {% for post_id, post_info in all_posts.items %}
-
-
-    <div style="display: none;">
-        <p>{{post_info.comments_count}} comments</p>
-        <input type="text" id="comment_text_{{ post_id }}" placeholder="Enter your comment">
-        <button onclick="addComment({{ post_id }})">Submit Comment</button>
-        {% for com_text in post_info.post_comments %}
-            <p>{{ com_text }}</p>
-        {% endfor %}
-    </div>
-    <div class = "likes_dislikes" style="display: none;">
-        <!-- like button -->
-        <button id="newlike_button_{{ post_id }}" onclick="likePost2({{ post_id }}, 1)">Like</i></button>
-        <span id="newlikes_count_{{ post_id }}">{{ post_info.newlikes }}</span>
-        <br>
+        <!-- Sidebar Ends -->
+  
+        <!-- Videos Section -->
+  
+        <div class="videos">
+        
+            {% block body %}
+            
+        <div class = "posts_div">
+            {% for post_id, post_info in all_posts.items %}
     
-        <!-- Dislike button -->
-        <button id="newdislike_button_{{ post_id }}" onclick="likePost2({{ post_id }}, 0)"><i class="fa-solid fa-down-long icons"></i></button>
-        <span id="newdislikes_count_{{ post_id }}">{{ post_info.newdislikes }}</span>
-
-    </div> 
-
-        <div class="bg-container">
-            <div class="primary-container">
-                <div class="post">
-                    <div class="reations">
-                        <button id="newlike_button_{{ post_id }}" onclick="likePost2({{ post_id }}, 1)">
-                            <i class="fa-solid fa-up-long icons"></i>
-                        </button>
-                        <div>
-                            <span id="totalnewlikes_count_{{ post_id }}">{{ post_info.alllikes }}</span>
-                        </div>
-                        <button id="newdislike_button_{{ post_id }}" onclick="likePost2({{ post_id }}, 0)">
-                            <i class="fa-solid fa-down-long icons"></i>
-                        </button>
-                    </div>
-                    <div class="main-post">
-                        <hr>
-                        <div class="main-content">
-                            
-                            <div class="community-container"> 
-
-                                <p class="community">
-                                    <a href="{% url 'user:viewprofile' username=post_info.user_name %}">
-                                        Posted by {{ post_info.user_name }}
-                                    </a>
-                                </p>
-                                
-                                <button>Join</button>
+    
+            <div style="display: none;">
+                <p>{{post_info.comments_count}} comments</p>
+                <input type="text" id="comment_text_{{ post_id }}" placeholder="Enter your comment">
+                <button onclick="addComment({{ post_id }})">Submit Comment</button>
+                {% for com_text in post_info.post_comments %}
+                    <p>{{ com_text }}</p>
+                {% endfor %}
+            </div>
+            <div class = "likes_dislikes" style="display: none;">
+                <!-- like button -->
+                <button id="newlike_button_{{ post_id }}" onclick="likePost2({{ post_id }}, 1)">Like</i></button>
+                <span id="newlikes_count_{{ post_id }}">{{ post_info.newlikes }}</span>
+                <br>
+            
+                <!-- Dislike button -->
+                <button id="newdislike_button_{{ post_id }}" onclick="likePost2({{ post_id }}, 0)"><i class="fa-solid fa-down-long icons"></i></button>
+                <span id="newdislikes_count_{{ post_id }}">{{ post_info.newdislikes }}</span>
+    
+            </div> 
+    
+                <div class="bg-container">
+                    <div class="primary-container">
+                        <div class="post">
+                            <div class="reations">
+                                <button id="newlike_button_{{ post_id }}" onclick="likePost2({{ post_id }}, 1)">
+                                    <i class="fa-solid fa-up-long icons"></i>
+                                </button>
+                                <div>
+                                    <span id="totalnewlikes_count_{{ post_id }}">{{ post_info.alllikes }}</span>
+                                </div>
+                                <button id="newdislike_button_{{ post_id }}" onclick="likePost2({{ post_id }}, 0)">
+                                    <i class="fa-solid fa-down-long icons"></i>
+                                </button>
                             </div>
-                            <p class="content">{{ post_info.post_caption }}</p>
-
-                            {% if post_info.image %}
-                                <img src="{{ post_info.image }}" alt="Post Image" class="img-content">
-                            {% else %}
-                                <img src="{% static 'image.jpeg' %}" class="img-content" alt="Default Image">
-                            {% endif %}
-
-                            <p>{{ post_info.post_description }}</p>
-                            <div class="reaction-container">
-                                <div class = "post-reactions display-likes">
-                                    <p><span id="likes_count_{{ post_id }}">{{ post_info.post_likes }}</p>
-                                    <button id="like_button_{{ post_id }}" onclick="likePost({{ post_id }})">Like</button>
+                            <div class="main-post">
+                                <hr>
+                                <div class="main-content">
+                                    
+                                    <div class="community-container"> 
+    
+                                        <p class="community">
+                                            <a href="{% url 'user:viewprofile' username=post_info.user_name %}">
+                                                Posted by {{ post_info.user_name }}
+                                            </a>
+                                        </p>
+                                        
+                                        <button>Join</button>
+                                    </div>
+                                    <p class="content">{{ post_info.post_caption }}</p>
+    
+                                    {% if post_info.image %}
+                                        <img src="{{ post_info.image }}" alt="Post Image" class="img-content">
+                                    {% else %}
+                                        <img src="{% static 'image.jpeg' %}" class="img-content" alt="Default Image">
+                                    {% endif %}
+    
+                                    <p>{{ post_info.post_description }}</p>
+                                    <div class="reaction-container">
+                                        <div class = "post-reactions display-likes">
+                                            <p><span id="likes_count_{{ post_id }}">{{ post_info.post_likes }}</p>
+                                            <button id="like_button_{{ post_id }}" onclick="likePost({{ post_id }})">Like</button>
+                                            
+                                        </div>
+                                        <div class="post-reactions">
+                                            <a href="{% url 'user:popup_comment' id=post_id %}">
+                                                <i class="fa-regular fa-comment"></i>
+                                            </a>
+                                            <p>{{post_info.comments_count}} comments</p>
+                                        </div>
+                                        <div class="post-reactions">
+                                            <i class="fa-solid fa-share"></i>
+                                            <p>Share</p>
+                                        </div>
+                                        <div class="post-reactions">
+                                            <i class="fa-regular fa-bookmark"></i>
+                                            <p>Save</p>
+                                        </div>
+                                        <br>
+                                    </div>
                                     
                                 </div>
-                                <div class="post-reactions">
-                                    <a href="{% url 'user:popup_comment' id=post_id %}">
-                                        <i class="fa-regular fa-comment"></i>
-                                    </a>
-                                    <p>{{post_info.comments_count}} comments</p>
-                                </div>
-                                <div class="post-reactions">
-                                    <i class="fa-solid fa-share"></i>
-                                    <p>Share</p>
-                                </div>
-                                <div class="post-reactions">
-                                    <i class="fa-regular fa-bookmark"></i>
-                                    <p>Save</p>
-                                </div>
-                                <br>
                             </div>
-                            
+                        </div>
+                        <div class="comment-section" id="comments">
+                            <input type="text" id="comment_text_{{ post_id }}" placeholder="Enter your comment">
+                            <button onclick="addComment({{ post_id }})">Submit Comment</button>
+                            {% for com_text in post_info.post_comments %}
+                                <p>{{ com_text }}</p>
+                            {% endfor %}
                         </div>
                     </div>
                 </div>
-                <div class="comment-section" id="comments">
-                    <input type="text" id="comment_text_{{ post_id }}" placeholder="Enter your comment">
-                    <button onclick="addComment({{ post_id }})">Submit Comment</button>
-                    {% for com_text in post_info.post_comments %}
-                        <p>{{ com_text }}</p>
-                    {% endfor %}
-                </div>
-            </div>
+                
+            {% endfor %}
+                
         </div>
-        
+        {% endblock %}
+        </div>
+      </div>
 
-        
 
 
-    {% endfor %}
+
+
+
+
+
+
 
     <script src="https://kit.fontawesome.com/c0128b9bb4.js" crossorigin="anonymous"></script>
     <script>
+
 
 
                 
@@ -287,6 +397,40 @@
         })
         .catch(error => console.error('Error:', error));
     }
+
+
+
+
+
+
+    function toggleMenu() {
+        var menu = document.getElementById("menuList");
+        menu.style.display = menu.style.display === "block" ? "none" : "block";
+      }
+      document.addEventListener('mouseup', function (e) {
+        var menuList = document.getElementById('menuList');
+        var profileButton = document.querySelector('.profile-button');
+    
+        if (!menuList.contains(e.target) && !profileButton.contains(e.target)) {
+            menuList.style.display = 'none';
+        }
+    });
+      document.addEventListener("DOMContentLoaded", function () {
+        const hamburgerIcon = document.getElementById("menu");
+        const sidebar = document.querySelector(".sidebar");
+        hamburgerIcon.addEventListener("click", function () {
+          sidebar.classList.toggle("sidebar-visible");
+        });
+      });
+
+
+
+
+
+
+
+
+
     </script>
 </body>
 </html>

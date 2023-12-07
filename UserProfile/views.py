@@ -29,7 +29,7 @@ def create_post_view(request):
             print("this is image url", image_url)
             
 
-        user_image = get_object_or_404(UserProfile, user=post.user)
+        # user_image = get_object_or_404(UserProfile, user=post.user)
         all_posts[post_id] = {
                 'post_caption': post.caption,
                 'post_description': post.description,
@@ -41,7 +41,7 @@ def create_post_view(request):
                 'newdislikes':post.newdislikes.count(),
                 'alllikes':(post.newlikes.count()-post.newdislikes.count()),
                 'image': image_url,
-                'user_image':user_image
+                # 'user_image':user_image
                 
         }
 
