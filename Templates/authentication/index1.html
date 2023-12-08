@@ -3,14 +3,14 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Index1</title>
-  <link
-      href="https://fonts.googleapis.com/icon?family=Material+Icons"
-      rel="stylesheet"
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index1</title>
+    <link
+        href="https://fonts.googleapis.com/icon?family=Material+Icons"
+        rel="stylesheet"
     />
-  <link rel="stylesheet" type="text/css" href="{% static 'index1.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'index1.css' %}">
 </head>
 
 <body>
@@ -27,7 +27,7 @@
                 <form action="{% url 'user:create_post' %}" method="POST" class="form" enctype="multipart/form-data">
                     {% csrf_token %}
 
-                        <div class="form-group">
+                    <div class="form-group">
                         <label for="caption">Caption</label>
                         <input type="text" id="caption" name="caption" required="">
                     </div>
@@ -47,15 +47,13 @@
         </div>
     </div>
 
-
-
     <div class="header">
         <div class="header__left">
-          <i id="menu" class="material-icons menu-icon">menu</i>
-          <a href="#" title="YouTube">
+            <i id="menu" class="material-icons menu-icon">menu</i>
+            <a href="#" title="Reddit">
             <img
-              src="https://cdn.mos.cms.futurecdn.net/8gzcr6RpGStvZFA2qRt4v6.jpg"
-              alt=""/>
+                src="https://cdn.mos.cms.futurecdn.net/8gzcr6RpGStvZFA2qRt4v6.jpg"
+                alt=""/>
             </a>
         </div>
   
@@ -67,40 +65,39 @@
         </div>
   
         <div class="header__icons">
-          <i class="material-icons display-this search-icon">search</i>
-          <a href="#" title="Upload video">
-            <i class="material-icons">video_call</i></a>
-          <i class="material-icons">apps</i>
-          <i class="material-icons">notifications</i>
-          {% if user.is_authenticated %}
-          <button class="profile-button" onclick=toggleMenu() >
-            
-            
-            <ul class="menu-list" id="menuList">
-              <li><a href="#">
-                  <div class="contain">
-                      <i class="material-icons  menu-icons">person</i>
-                      <span class="text">
-                          My Account
-                      </span>
-                  </div>
-              </a></li>
-              <li><a href="#">
-                  <div class="contain">
-                      <i class="material-icons menu-icons">history</i>
-                      <span class="text">
-                          History
-                      </span>
-                  </div>
-              </a></li>
-              <li><a href="#">
-                  <div class="contain">
-                      <i class="material-icons menu-icons">logout</i>
-                      <span class="text">
-                          Sign out
-                      </span>
-                  </div>
-              </a></li>
+        <i class="material-icons display-this search-icon">search</i>
+        
+        <i class="material-icons">apps</i>
+        <i class="material-icons">notifications</i>
+        {% if user.is_authenticated %}
+        <button class="profile-button" onclick=toggleMenu() >
+        
+        
+        <ul class="menu-list" id="menuList">
+            <li><a href="#">
+                <div class="contain">
+                    <i class="material-icons  menu-icons">person</i>
+                    <span class="text">
+                        My Account
+                    </span>
+                </div>
+            </a></li>
+            <li><a href="#">
+                <div class="contain">
+                    <i class="material-icons menu-icons">history</i>
+                    <span class="text">
+                        History
+                    </span>
+                </div>
+            </a></li>
+            <li><a href="#">
+                <div class="contain">
+                    <i class="material-icons menu-icons">logout</i>
+                    <span class="text">
+                        Sign out
+                    </span>
+                </div>
+            </a></li>
             </ul>
                 
           </button>
@@ -110,11 +107,11 @@
           </a>
           {% endif %}
         </div>
-      </div>
-      <!-- Header Ends -->
-  
-      <!-- Main Body Starts -->
-      <div class="mainBody">
+        </div>
+        <!-- Header Ends -->
+    
+        <!-- Main Body Starts -->
+        <div class="mainBody">
         <!-- Sidebar Starts -->
   
         <div class="sidebar">
@@ -268,7 +265,7 @@
         </div>
         {% endblock %}
         </div>
-      </div>
+    </div>
 
 
 

@@ -544,6 +544,7 @@ a{
   align-items: center;
   height: 70px;
   padding: 15px;
+  background-color: #212121;
 }
 
 .header__left {
@@ -605,6 +606,7 @@ a{
   width: 250px; /* Start with a width of 0 */
   overflow: hidden; /* Hide the content that overflows the sidebar */
   transition: width 0.3s ease;
+  background-color: #212121;
 }
 .sidebar.sidebar-visible {
     /* Styles for the visible state of the sidebar */
